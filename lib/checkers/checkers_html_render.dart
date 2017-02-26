@@ -1,7 +1,5 @@
 import 'dart:html';
-
 import 'package:angular2/core.dart';
-
 import 'checkers.dart';
 
 @Component(
@@ -13,11 +11,26 @@ class CheckersHtml implements AfterViewChecked {
 	@Input()
 	CheckersBoard board;
 
-//  CheckersHtmlBoardWrapper outputBoard;
 
+	CheckersHtml() {
+		print("Starting");
+	}
 
-	static const evenPattern = const [1, 0, 1, 0, 1, 0, 1, 0];
-	static const oddPattern = const [0, 1, 0, 1, 0, 1, 0, 1];
+	TableCellElement GetTableElement(int x, int y) {
+		return querySelector("td[data-checkers-location='${y}_${x}']");
+	}
+
+	void Highlight(int x, int y) {
+		GetTableElement(x,y).classes.add("highlight");
+	}
+
+	/// Remove all highlighting
+	void UnHighlightAll() {
+		querySelectorAll("td.highlight").forEach(
+				(Element e) {
+					e.classes.remove("highlight");
+				});
+	}
 
 	void Colorize() {
 		var allitems = querySelectorAll("td[data-checkers-location]");
@@ -30,8 +43,7 @@ class CheckersHtml implements AfterViewChecked {
 		for (int i = 0; i < 8; i++) {
 			bool pattern = i % 2 == 0;
 			for (int j = 0; j < 8; j++) {
-				var toColor = querySelector(
-					"td[data-checkers-location='${i}_${j}']");
+				var toColor = GetTableElement(i,j);
 				if (toColor == null) {
 					throw new StateError(
 						"Could not find the td with location ${i}_${j}}");
@@ -48,8 +60,21 @@ class CheckersHtml implements AfterViewChecked {
 	}
 
 	void Select(int x, int y) {
+		this.UnHighlightAll();
 		print("selecting ${x},${y}");
-		if (board.isPiece(board.GetSquare(CheckersBoard.Pos(x, y))));
+		Position position = CheckersBoard.Pos(x, y);
+		Square square = board.GetSquare(position);
+		if(CheckersBoard.isPiece(square)) {
+			var actions = board.GetAllActions(position);
+
+			void DoHighlight(Direction d, Action a) {
+				if (a == Action.Move) {
+					Position rel = CheckersBoard.relativeTo(d, position);
+					this.Highlight(rel.x, rel.y);
+				}
+			}
+			actions.forEach(DoHighlight);
+		}
 	}
 
 	@override
@@ -57,12 +82,17 @@ class CheckersHtml implements AfterViewChecked {
 		this.Colorize();
 	}
 
-	String combine(int i, int j) {
-		return "${i}_${j}";
+	String combine(int x, int y) {
+		return "${x}_${y}";
 	}
 
-	restart() {
+	void Restart() {
 		print("restarting");
 		board.Restart();
 	}
+
+	isRed(a) => CheckersBoard.isRed(a);
+	isBlack(a) => CheckersBoard.isBlack(a);
+	isStacked(a) => CheckersBoard.isStacked(a);
+	isPiece(a) => CheckersBoard.isPiece(a);
 }

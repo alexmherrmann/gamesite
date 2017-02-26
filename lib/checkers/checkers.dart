@@ -1,12 +1,15 @@
+/// Keep track of the state of a square
 enum Square {
 	Empty,
 	Red,
 	RedStacked,
 	Black,
 	BlackStacked,
+	/// unused for now
 	Edge,
 }
 
+/// A direction
 enum Direction {
 	UpRight,
 	UpLeft,
@@ -15,20 +18,18 @@ enum Direction {
 }
 
 enum Action {
+	/// Can jump a piece (move 2)
 	Jump,
-
-	/// can jump a piece (move 2)
+	/// Can do nothing
 	Nothing,
-
-	/// you can do nothing
+	/// Can move
 	Move,
-
-	/// can move
-	NotPiece,
-
-	/// This is not a piece
+	/// Not a piece
+	NotPiece
 }
 
+
+/// Helper class
 class Position {
 	int x = -1;
 	int y = -1;
@@ -40,9 +41,13 @@ class NoSuchSquareException extends ArgumentError {
 }
 
 class CheckersBoard {
+	/// Useless fluff
 	String name = "2-person checkers!";
+
+	/// Keeps track of the board
 	List<List<Square>> board;
 
+	/// Initialize the board
 	CheckersBoard() {
 		this.board = new List<List<Square>>(8);
 		for (int i = 0; i < 8; i++) {
@@ -53,6 +58,7 @@ class CheckersBoard {
 		}
 	}
 
+	/// Get the square for a position
 	Square GetSquare(Position p) {
 		if (p.x > 8) {
 			return Square.Edge;
@@ -69,6 +75,7 @@ class CheckersBoard {
 		return this.board[p.y][p.x];
 	}
 
+	/// Helper to turn x/y into position
 	static Position Pos(int x, int y) {
 		Position p = new Position();
 		p.x = x;
@@ -76,10 +83,12 @@ class CheckersBoard {
 		return p;
 	}
 
+	/// Set a square at a position to a value
 	void SetSquare(Position p, Square s) {
 		this.board[p.y][p.x] = s;
 	}
 
+	/// Get whatever action is possible in the specified direction
 	Action GetPossibleAction(Position position, Direction direction) {
 		Square original = this.GetSquare(position);
 
@@ -109,6 +118,7 @@ class CheckersBoard {
 		}
 	}
 
+	/// Return a map of actions for each 4 directions
 	Map<Direction, Action> GetAllActions(Position p) {
 		if (!isPiece(GetSquare(p))) {
 			const actions = const {
@@ -119,21 +129,33 @@ class CheckersBoard {
 			};
 			return actions;
 		} else {
-			var actions = {
-				Direction.DownLeft: this.GetPossibleAction(
-					p, Direction.DownLeft),
-				Direction.DownRight: this.GetPossibleAction(
-					p, Direction.DownRight),
-				Direction.UpLeft: this.GetPossibleAction(p, Direction.UpLeft),
-				Direction.UpRight: this.GetPossibleAction(p, Direction.UpRight)
-			};
+//			var actions = {
+//				Direction.DownLeft: this.GetPossibleAction(
+//					p, Direction.DownLeft),
+//				Direction.DownRight: this.GetPossibleAction(
+//					p, Direction.DownRight),
+//				Direction.UpLeft: this.GetPossibleAction(p, Direction.UpLeft),
+//				Direction.UpRight: this.GetPossibleAction(p, Direction.UpRight)
+//			};
+			var DownLeft = this.GetPossibleAction(p, Direction.DownLeft);
+			var DownRight = this.GetPossibleAction(p, Direction.DownRight);
+			var UpLeft = this.GetPossibleAction(p, Direction.UpLeft);
+			var UpRight = this.GetPossibleAction(p, Direction.UpRight);
+
+			var actions = new Map<Direction, Action>();
+
+			actions[Direction.DownLeft] = DownLeft;
+			actions[Direction.DownRight] = DownRight;
+			actions[Direction.UpLeft] = UpLeft;
+			actions[Direction.UpRight] = UpRight;
 			return actions;
 		}
 		return null;
 	}
 
+	/// Get the position relative to another in a specific direction
 	static Position relativeTo(Direction d, Position p) {
-		Position lookAt;
+		Position lookAt = new Position();
 		switch (d) {
 			case Direction.DownLeft:
 				lookAt.x = p.x - 1;
@@ -192,26 +214,28 @@ class CheckersBoard {
 	//piece helpers
 
 	/// is a red piece
-	bool isRed(Square s) => s == Square.Red || s == Square.RedStacked;
+	static bool isRed(Square s) => s == Square.Red || s == Square.RedStacked;
 
 	/// is a black piece
-	bool isBlack(Square s) => s == Square.Black || s == Square.BlackStacked;
+	static bool isBlack(Square s) => s == Square.Black || s == Square.BlackStacked;
 
 	/// is a stacked piece
-	bool isStacked(Square s) =>
+	static bool isStacked(Square s) =>
 		s == Square.RedStacked || s == Square.BlackStacked;
 
 	/// is any piece!
-	bool isPiece(Square s) => isRed(s) || isBlack(s);
+	static bool isPiece(Square s) => isRed(s) || isBlack(s);
 
 	/// Are two squares the same color?
-	bool isSameColor(Square s1, Square s2) =>
+	static bool isSameColor(Square s1, Square s2) =>
 		isRed(s1) == isRed(s2); // could be isBlack() just as easily
 
 
 	// action helpers
 	/// is the thing given an action we can actually execute on
-	bool canDoSomething(Action a) => a == Action.Jump || a == Action.Move;
+	static bool canDoSomething(Action a) =>
+		a == Action.Jump ||
+			a == Action.Move;
 
 
 }

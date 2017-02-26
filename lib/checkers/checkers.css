@@ -12,7 +12,10 @@
     width: 33px;
     height: 33px;
     text-align: center;
-    /*cursor: pointer;*/
+}
+/* highlight */
+.htmlboard td.highlight {
+    border: 3px solid red;
 }
 
 .stacked {

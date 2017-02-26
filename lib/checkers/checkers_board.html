@@ -1,17 +1,20 @@
-<h3>HTML</h3>
+<p>
+Restart the game to begin, other buttons may come and go as tests need to be done
+</p>
 
-<button (click)="restart()">Restart the game</button>
+<button (click)="Restart()">Restart the game</button>
+<button (click)="Highlight(5,1)">Highlight test</button>
 <table class="htmlboard">
-    <tr *ngFor="let row of board.board; let i = index">
+    <tr *ngFor="let row of board.board; let y = index">
         <!--<td *ngFor="let col of row; let j = index">-->
-        <td *ngFor="let col of row; let j=index"
-            [attr.data-checkers-location]="combine(i,j)"
-            (click)="Select(i,j)">
+        <td *ngFor="let col of row; let x=index"
+            [attr.data-checkers-location]="combine(y,x)"
+            (click)="Select(x,y)">
             <!--<span class="square" [class.darkback]="i%2==0" [class.lightback]="i%2==1">-->
             <span class="square">
-                <span *ngIf="board.isRed(col)">R</span>
-                <span *ngIf="board.isBlack(col)">B</span>
-                <span *ngIf="!board.isPiece(col)">&nbsp;</span>
+                <span *ngIf="isRed(col)">R</span>
+                <span *ngIf="isBlack(col)">B</span>
+                <span *ngIf="!isPiece(col)">&nbsp;</span>
             </span>
         </td>
     </tr>

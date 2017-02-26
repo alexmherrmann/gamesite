@@ -4,7 +4,9 @@
 <table class="htmlboard">
     <tr *ngFor="let row of board.board; let i = index">
         <!--<td *ngFor="let col of row; let j = index">-->
-        <td *ngFor="let col of row; let j=index" [attr.data-checkers-location]="combine(i,j)">
+        <td *ngFor="let col of row; let j=index"
+            [attr.data-checkers-location]="combine(i,j)"
+            (click)="Select(i,j)">
             <!--<span class="square" [class.darkback]="i%2==0" [class.lightback]="i%2==1">-->
             <span class="square">
                 <span *ngIf="board.isRed(col)">R</span>

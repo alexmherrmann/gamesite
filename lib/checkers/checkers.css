@@ -1,0 +1,20 @@
+.lightback {
+    background-color: beige;
+}
+
+.darkback {
+    background-color: #9B5D25;
+    cursor: pointer;
+}
+
+.htmlboard td {
+    border: solid;
+    width: 33px;
+    height: 33px;
+    text-align: center;
+    /*cursor: pointer;*/
+}
+
+.stacked {
+    font-weight: bolder;
+}

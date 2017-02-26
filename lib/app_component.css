@@ -3,16 +3,16 @@
 }
 
 .blue {
-  background-color: #2196F3;
-  color: white;
+    background-color: #2196F3;
+    color: white;
 }
 
 .title, .subtitle {
-  text-align: center;
+    text-align: center;
 }
 
 .subtitle {
-  opacity: .5;
-  font-family: monospace;
-  color: darkmagenta;
+    opacity: .5;
+    font-family: monospace;
+    color: darkmagenta;
 }

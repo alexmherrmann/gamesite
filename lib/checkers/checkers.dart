@@ -99,22 +99,23 @@ class CheckersBoard {
 		Position lookAt = relativeTo(direction, position);
 
 		Square inDirection = this.GetSquare(lookAt);
-		if (isPiece(inDirection)) {
+
+		if (isEmpty(inDirection)) {
+			return Action.Move;
+		}
+
+		if (isSameColor(original, inDirection)) {
 			return Action.Nothing;
 		}
 
-		if (isRed(original)) {
-			if (isRed(inDirection)) {
-				return Action.Nothing; // blocked
-			} else if (isBlack(inDirection)) {
-				Square possibleBlock = this.GetSquare(
-					relativeTo(direction, lookAt));
-				if (possibleBlock == Square.Empty) {
-					return Action.Jump;
-				}
-			}
-		} else if (original == Square.Black) {
+		if (!isSameColor(original, inDirection)) {
+			Square possibleJump =
+				this.GetSquare(relativeTo(direction, lookAt));
 
+			if(isEmpty(possibleJump)) {
+				return Action.Jump;
+			}
+			return Action.Nothing;
 		}
 	}
 
@@ -129,25 +130,14 @@ class CheckersBoard {
 			};
 			return actions;
 		} else {
-//			var actions = {
-//				Direction.DownLeft: this.GetPossibleAction(
-//					p, Direction.DownLeft),
-//				Direction.DownRight: this.GetPossibleAction(
-//					p, Direction.DownRight),
-//				Direction.UpLeft: this.GetPossibleAction(p, Direction.UpLeft),
-//				Direction.UpRight: this.GetPossibleAction(p, Direction.UpRight)
-//			};
-			var DownLeft = this.GetPossibleAction(p, Direction.DownLeft);
-			var DownRight = this.GetPossibleAction(p, Direction.DownRight);
-			var UpLeft = this.GetPossibleAction(p, Direction.UpLeft);
-			var UpRight = this.GetPossibleAction(p, Direction.UpRight);
-
-			var actions = new Map<Direction, Action>();
-
-			actions[Direction.DownLeft] = DownLeft;
-			actions[Direction.DownRight] = DownRight;
-			actions[Direction.UpLeft] = UpLeft;
-			actions[Direction.UpRight] = UpRight;
+			var actions = {
+				Direction.DownLeft: this.GetPossibleAction(
+					p, Direction.DownLeft),
+				Direction.DownRight: this.GetPossibleAction(
+					p, Direction.DownRight),
+				Direction.UpLeft: this.GetPossibleAction(p, Direction.UpLeft),
+				Direction.UpRight: this.GetPossibleAction(p, Direction.UpRight)
+			};
 			return actions;
 		}
 		return null;
@@ -159,19 +149,19 @@ class CheckersBoard {
 		switch (d) {
 			case Direction.DownLeft:
 				lookAt.x = p.x - 1;
-				lookAt.y = p.y - 1;
+				lookAt.y = p.y + 1;
 				break;
 			case Direction.DownRight:
 				lookAt.x = p.x + 1;
-				lookAt.y = p.y - 1;
+				lookAt.y = p.y + 1;
 				break;
 			case Direction.UpLeft:
 				lookAt.x = p.x - 1;
-				lookAt.y = p.y + 1;
+				lookAt.y = p.y - 1;
 				break;
 			case Direction.UpRight:
 				lookAt.x = p.x + 1;
-				lookAt.y = p.y + 1;
+				lookAt.y = p.y - 1;
 				break;
 			default:
 				throw new Exception("wat");
@@ -213,18 +203,24 @@ class CheckersBoard {
 
 	//piece helpers
 
-	/// is a red piece
+	/// Is a red piece
 	static bool isRed(Square s) => s == Square.Red || s == Square.RedStacked;
 
-	/// is a black piece
+	/// Is a black piece
 	static bool isBlack(Square s) => s == Square.Black || s == Square.BlackStacked;
 
-	/// is a stacked piece
+	/// Is a stacked piece
 	static bool isStacked(Square s) =>
 		s == Square.RedStacked || s == Square.BlackStacked;
 
-	/// is any piece!
+	/// Is any piece!
 	static bool isPiece(Square s) => isRed(s) || isBlack(s);
+
+	/// At the edge?
+	static bool isEdge(Square s) => s == Square.Edge;
+
+	/// Is the square empty
+	static bool isEmpty(Square s) => s == Square.Empty;
 
 	/// Are two squares the same color?
 	static bool isSameColor(Square s1, Square s2) =>
@@ -232,10 +228,14 @@ class CheckersBoard {
 
 
 	// action helpers
-	/// is the thing given an action we can actually execute on
+	/// Is the thing given an action we can actually execute on
 	static bool canDoSomething(Action a) =>
 		a == Action.Jump ||
 			a == Action.Move;
+
+	static bool isTowardsHome(Square s, Position p) {
+		
+	}
 
 
 }

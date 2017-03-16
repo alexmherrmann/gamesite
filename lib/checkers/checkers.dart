@@ -101,7 +101,9 @@ class CheckersBoard {
 		Square inDirection = this.GetSquare(lookAt);
 
 		if (isEmpty(inDirection)) {
-			return Action.Move;
+			if (!isTowardsHome(original, direction) && !isStacked(original))
+				return Action.Move;
+			return Action.Nothing;
 		}
 
 		if (isSameColor(original, inDirection)) {
@@ -112,10 +114,17 @@ class CheckersBoard {
 			Square possibleJump =
 				this.GetSquare(relativeTo(direction, lookAt));
 
-			if(isEmpty(possibleJump)) {
+			if(isEmpty(possibleJump) && !isTowardsHome(possibleJump, direction)) {
 				return Action.Jump;
 			}
 			return Action.Nothing;
+		}
+	}
+
+	/// Perform a move
+	bool Move(Position p, Direction d) {
+		if (isPiece(GetSquare(p))) {
+
 		}
 	}
 
@@ -233,8 +242,13 @@ class CheckersBoard {
 		a == Action.Jump ||
 			a == Action.Move;
 
-	static bool isTowardsHome(Square s, Position p) {
-		
+	static bool isTowardsHome(Square s, Direction d) {
+		if(isRed(s)) {
+			return d == Direction.DownLeft || d == Direction.DownRight;
+		} else if (isBlack(s)) {
+			return d == Direction.UpLeft || d == Direction.UpRight;
+
+		}
 	}
 
 

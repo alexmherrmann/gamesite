@@ -9,11 +9,13 @@ Restart the game to begin, other buttons may come and go as tests need to be don
         <!--<td *ngFor="let col of row; let j = index">-->
         <td *ngFor="let col of row; let x=index"
             [attr.data-checkers-location]="combine(y,x)"
-            (click)="Select(x,y)">
+            (click)="Select(x,y)"
+            [class.clickable]="isPiece(col)"
+            [class.stacked]="isStacked(col)">
             <!--<span class="square" [class.darkback]="i%2==0" [class.lightback]="i%2==1">-->
             <span class="square">
-                <span *ngIf="isRed(col)">R</span>
-                <span *ngIf="isBlack(col)">B</span>
+                <span *ngIf="isRed(col)" class="redpiece">R</span>
+                <span *ngIf="isBlack(col)" class="blackpiece">B</span>
                 <span *ngIf="!isPiece(col)">&nbsp;</span>
             </span>
         </td>

@@ -4,6 +4,9 @@
 
 .darkback {
     background-color: #9B5D25;
+}
+
+.haspiece {
     cursor: pointer;
 }
 
@@ -16,8 +19,21 @@
 /* highlight */
 .htmlboard td.highlight {
     border: 3px solid red;
+    cursor: pointer;
 }
 
 .stacked {
     font-weight: bolder;
+}
+
+.square {
+    font-weight: bold;
+}
+
+.square.redpiece {
+    color: #8e0300;
+}
+
+.square.blackpiece {
+    color: #262626;
 }

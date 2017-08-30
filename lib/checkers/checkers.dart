@@ -40,7 +40,14 @@ class NoSuchSquareException extends ArgumentError {
 	NoSuchSquareException(String msg) : super(msg);
 }
 
+class CannotPerformActionException extends ArgumentError {
+	CannotPerformActionException(String msg) : super(msg);
+}
+
 class CheckersBoard {
+
+	int red = 12;
+	int black = 12;
 	/// Useless fluff
 	String name = "2-person checkers!";
 
@@ -51,10 +58,60 @@ class CheckersBoard {
 	CheckersBoard() {
 		this.board = new List<List<Square>>(8);
 		for (int i = 0; i < 8; i++) {
+
 			this.board[i] = new List<Square>(8);
 			for (int j = 0; j < 8; j++) {
 				this.board[i][j] = Square.Empty;
 			}
+		}
+	}
+
+	/// Set the square at the position
+	void SetSquare(Position position, Square square) {
+		// TODO: change this to use one of the logic function
+
+		// Check we're not trying to set something as an edge square
+		if(square == Square.Edge) {
+			throw new ArgumentError("Cannot set a square to be empty");
+		}
+
+		// If it isn't a nonexistant position...
+		if(this.GetSquare(position) != Square.Edge) {
+			// set it!
+			this.board[position.x][position.y] = square;
+		}
+	}
+
+	void DoAction(Position position, Direction direction, Action action) {
+		// first check that the action is viable
+		Action actionInDirection = this.GetPossibleAction(position, direction);
+		Position inDirection = relativeTo(direction, position);
+		Position inFurther = relativeTo(direction, inDirection);
+		Square thisSquare = this.GetSquare(position);
+
+		if(actionInDirection == action) {
+			switch(action) {
+				case Action.Move:
+					this.SetSquare(position, Square.Empty);
+					this.SetSquare(inDirection, thisSquare);
+					break;
+				case Action.Jump:
+					this.SetSquare(position, Square.Empty);
+					this.SetSquare(inDirection, Square.Empty);
+					this.SetSquare(inFurther, thisSquare);
+
+					if(isRed(thisSquare)) this.black--;
+					else this.red--;
+					break;
+				case Action.Nothing:
+					break;
+				case Action.NotPiece:
+					throw new CannotPerformActionException("NotPiece is not an action!");
+				default:
+					throw new ArgumentError("NOT IMPLEMENTED");
+			}
+		} else {
+			throw new CannotPerformActionException("Cannot perform given action");
 		}
 	}
 
@@ -81,11 +138,6 @@ class CheckersBoard {
 		p.x = x;
 		p.y = y;
 		return p;
-	}
-
-	/// Set a square at a position to a value
-	void SetSquare(Position p, Square s) {
-		this.board[p.y][p.x] = s;
 	}
 
 	/// Get whatever action is possible in the specified direction

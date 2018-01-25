@@ -28,6 +28,24 @@ enum Action {
 	NotPiece
 }
 
+class GameOptions {
+	bool makeForceJump = false;
+}
+
+enum State {
+	/// It's red's turn
+	RedTurn,
+	/// Red MUST jump 
+	RedForceJumpTurn,
+	/// Black turn
+	BlackTurn,
+	/// Black MUST jump
+	BlackForceJumpTurn,
+
+	/// Game is finished
+	Done
+}
+
 
 /// Helper class
 class Position {
@@ -46,6 +64,8 @@ class CannotPerformActionException extends ArgumentError {
 
 class CheckersBoard {
 
+	GameOptions _options;
+
 	int red = 12;
 	int black = 12;
 	/// Useless fluff
@@ -54,8 +74,7 @@ class CheckersBoard {
 	/// Keeps track of the board
 	List<List<Square>> board;
 
-	/// Initialize the board
-	CheckersBoard() {
+	void _setup() {
 		this.board = new List<List<Square>>(8);
 		for (int i = 0; i < 8; i++) {
 
@@ -64,6 +83,16 @@ class CheckersBoard {
 				this.board[i][j] = Square.Empty;
 			}
 		}
+	}
+
+	/// Initialize the board
+	CheckersBoard() {
+		this._setup();
+	}
+
+	CheckersBoard(GameOptions options) {
+		this.options = options;
+		this._setup();
 	}
 
 	/// Set the square at the position
@@ -294,6 +323,8 @@ class CheckersBoard {
 		a == Action.Jump ||
 			a == Action.Move;
 
+
+	/// This assumes that red starts at the bottom and vice-versa for black
 	static bool isTowardsHome(Square s, Direction d) {
 		if(isRed(s)) {
 			return d == Direction.DownLeft || d == Direction.DownRight;
